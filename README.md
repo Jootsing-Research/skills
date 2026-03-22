@@ -8,14 +8,14 @@ Works with Claude Code, Codex, Cursor, OpenClaw, GitHub Copilot, and [35+ other 
 
 ```bash
 # For any agent (Claude Code, Codex, Cursor, etc.)
-npx skills add jootsing-research/jootsing-skills
+npx skills add jootsing-research/skills
 ```
 
 For Claude Code plugin (includes MCP tools):
 
 ```
-/plugin marketplace add jootsing-research/jootsing-skills
-/plugin install tapkit@tapkit-skills
+/plugin marketplace add jootsing-research/skills
+/plugin install tapkit@skills
 ```
 
 ## Skills
