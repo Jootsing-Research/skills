@@ -23,6 +23,7 @@
       "strict": false,
       "skills": [
         "./skills/tapkit",
+        "./skills/tapkit-cli",
         "./skills/hinge",
         "./skills/telegram",
         "./skills/tiktok",
