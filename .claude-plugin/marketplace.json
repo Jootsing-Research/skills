@@ -29,7 +29,11 @@
         "./skills/tiktok",
         "./skills/linkedin",
         "./skills/uber-eats",
-        "./skills/twitter"
+        "./skills/twitter",
+        "./skills/clock",
+        "./skills/facebook",
+        "./skills/instagram",
+        "./skills/weather"
       ]
     }
   ]
