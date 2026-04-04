@@ -2,20 +2,23 @@
 
 Skills that teach AI agents how to control iPhones and navigate iOS apps.
 
-Works with Claude Code, Codex, Cursor, OpenClaw, GitHub Copilot, and [35+ other agents](https://github.com/vercel-labs/skills).
+## Official Plugins
+
+If you're using TapKit with **Claude Code** or **Codex**, use the official plugins instead — they bundle these skills with MCP tools for a seamless experience:
+
+- [TapKit for Claude Code](https://github.com/Jootsing-Research/tapkit-claude-code)
+- [TapKit for Codex](https://github.com/Jootsing-Research/tapkit-codex)
+
+## When to Use This Repo
+
+This repo is for agents and tools that **don't have an official plugin** — Cursor, OpenClaw, GitHub Copilot, and [35+ other agents](https://github.com/vercel-labs/skills) that support the open [Agent Skills](https://agentskills.io) standard.
+
+Install the skills, then connect TapKit via the [MCP server](https://github.com/Jootsing-Research/tapkit-mcp) or [CLI](https://github.com/Jootsing-Research/tapkit-cli).
 
 ## Install
 
 ```bash
-# For any agent (Claude Code, Codex, Cursor, etc.)
 npx skills add jootsing-research/skills
-```
-
-For Claude Code plugin (includes MCP tools):
-
-```
-/plugin marketplace add jootsing-research/skills
-/plugin install tapkit@skills
 ```
 
 ## Skills
@@ -25,34 +28,40 @@ For Claude Code plugin (includes MCP tools):
 | Skill | Description |
 |-------|-------------|
 | `tapkit` | How to use TapKit — coordinate system, screenshot loop, gestures, navigation patterns |
+| `tapkit-cli` | How to use the TapKit CLI — terminal commands for iPhone control |
 
 ### App Skills
 
 | Skill | App | What it covers |
 |-------|-----|---------------|
+| `clock` | Clock | Alarms, stopwatch, timers, world clock |
+| `facebook` | Facebook | Feed, reels, marketplace, groups, messaging, stories |
 | `hinge` | Hinge | Profile browsing, likes, roses, messaging, preferences |
+| `instagram` | Instagram | Feed, reels, stories, DMs, explore, profile |
+| `linkedin` | LinkedIn | Feed, networking, jobs, reactions, messaging |
 | `telegram` | Telegram | Chat types, reactions, search, bots, groups, channels |
 | `tiktok` | TikTok | Feed navigation, video actions, DMs, inbox, creator pages |
-| `linkedin` | LinkedIn | Feed, networking, jobs, reactions, messaging |
-| `uber-eats` | Uber Eats | Restaurant search, ordering, checkout, reorders |
 | `twitter` | Twitter / X | Feed, compose, DMs, search, interactions |
+| `uber-eats` | Uber Eats | Restaurant search, ordering, checkout, reorders |
+| `weather` | Weather | Forecasts, maps, air quality, detailed conditions |
 
 ## How Skills Work
 
-Skills are Markdown files (`SKILL.md`) that follow the open [Agent Skills](https://agentskills.io) standard. They teach AI agents two things:
+Skills are Markdown files (`SKILL.md`) that follow the open [Agent Skills](https://agentskills.io) standard. They teach AI agents:
 
 - **App knowledge** — what the app looks like (tabs, buttons, navigation patterns, gotchas)
-- **Task strategy** — what to do with the app (engagement playbooks, workflows)
+- **Task strategy** — what to do with the app (workflows, engagement playbooks)
 
 The agent reads the skill, then uses TapKit tools (via MCP or CLI) to execute actions on the phone.
 
 ## Requirements
 
 - [TapKit](https://tapkit.ai) account with a connected iPhone
-- TapKit CLI (`npm install -g tapkit`) or MCP server access
+- TapKit [MCP server](https://github.com/Jootsing-Research/tapkit-mcp) or [CLI](https://github.com/Jootsing-Research/tapkit-cli)
 
 ## Links
 
-- [TapKit CLI](https://github.com/Jootsing-Research/tapkit-cli) — Control iPhones from the terminal
 - [TapKit](https://tapkit.ai) — Get started
+- [TapKit MCP](https://github.com/Jootsing-Research/tapkit-mcp) — MCP server for AI agents
+- [TapKit CLI](https://github.com/Jootsing-Research/tapkit-cli) — Control iPhones from the terminal
 - [Documentation](https://docs.tapkit.ai) — Full docs
