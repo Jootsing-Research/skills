@@ -9,7 +9,15 @@ You have access to a physical iPhone through TapKit MCP tools. You can see the s
 
 ## Setup
 
-If only one phone is connected, it's auto-selected — just start using tools directly (e.g. `screenshot`). If multiple phones are connected, call `list_phones` then `select_phone` with the ID you want.
+**Every tool requires a `phone_id`.** Always start by calling `list_phones` to discover available phones — it returns IDs, connection status, and screen dimensions. Then pass the `phone_id` on every subsequent tool call.
+
+```
+list_phones → pick a phone_id → use phone_id on every call
+```
+
+If a phone hasn't been set up for control yet, call `enable_switch_control(phone_id)` first — this enables Switch Control on the Mac for that phone. You only need to do this once per session.
+
+**`select_phone`** is optional. It eagerly switches Switch Control to a phone, but actions on an inactive phone will auto-activate it. Only use `select_phone` if you want to pre-switch before a long sequence of actions on a specific phone.
 
 ## Use Tools First, Navigate Second
 
@@ -28,7 +36,7 @@ Your workflow is always: **screenshot → look → act → screenshot to verify*
 1. Take a `screenshot` to see what's on screen
 2. Visually identify the element you need to interact with
 3. Estimate the pixel coordinates of its **center**
-4. Call the appropriate tool (tap, swipe, type_text, etc.)
+4. Call the appropriate tool (tap, swipe, copy_text_to_phone, etc.)
 5. Take another `screenshot` to confirm the action worked
 6. If it didn't work, try a different approach
 
@@ -36,7 +44,7 @@ Your workflow is always: **screenshot → look → act → screenshot to verify*
 
 ## Coordinate System
 
-Screenshots are resized so you see them at the same resolution as the coordinate space. **Coordinates map 1:1 with screenshot pixels** — if an element is at pixel (300, 672) in the image, tap (300, 672). The dimensions are returned by `select_phone` and `get_phone_info` (typically around 618x1344).
+Screenshots are resized so you see them at the same resolution as the coordinate space. **Coordinates map 1:1 with screenshot pixels** — if an element is at pixel (300, 672) in the image, tap (300, 672). Screen dimensions are returned by `list_phones` (typically around 618x1344).
 
 - (0, 0) is the top-left corner
 - x increases rightward, y increases downward
@@ -59,12 +67,17 @@ Screenshots are resized so you see them at the same resolution as the coordinate
 - `hold_and_drag(from_x, from_y, to_x, to_y, hold_duration_ms?)` — Long press then drag. Use for drag-and-drop, reordering lists
 
 ### Input
-- `type_text(text)` — Type into the currently focused text field. **You must tap the field first** to focus it before typing
+- `copy_text_to_phone(text)` — Load text onto the phone's clipboard for pasting into text fields (see **Text Input** section below)
 - `activate_siri` — Trigger Siri voice assistant
+- `escape` — Dismiss keyboards, alerts, popups, or modal screens
 
 ### Device
+- `list_phones` — List all phones with connection status, IDs, and dimensions. **Call this first.**
+- `select_phone(phone_id)` — Eagerly switch Switch Control to a phone (optional — auto-activates on use)
+- `enable_switch_control(phone_id)` — Enable Switch Control on the Mac for a phone (required once per session)
 - `screenshot` — Get current screen as an image
-- `get_phone_info` — Get screen dimensions and device name
+- `get_phone_status(phone_id)` — Get real-time status: connection, Switch Control, screen lock, streaming, dimensions
+- `get_phone_info(phone_id)` — *(Deprecated — use `get_phone_status` instead.)* Returns screen dimensions and phone name
 - `lock` / `unlock` — Lock or unlock the screen
 - `volume_up` / `volume_down` — Volume controls
 - `run_shortcut(index)` — Run an iOS Shortcut by its index number
@@ -76,17 +89,54 @@ Screenshots are resized so you see them at the same resolution as the coordinate
 - **Dismiss a modal/popup**: look for "X", "Cancel", "Done", or tap outside it
 - **Pull to refresh**: `drag(300, 200, 300, 600)` (drag down from top of content area)
 - **Switch apps**: `swipe(300, 1300, "up")` (swipe up from bottom)
-- **Close keyboard**: tap anywhere outside the keyboard, or `press_home`
+- **Close keyboard**: call `escape`, tap anywhere outside the keyboard, or `press_home`
 - **Tab bars** at the bottom of apps are the main navigation — tap the icons to switch sections
 - **iOS alerts** (permissions, confirmations) appear as centered popups — tap "Allow", "OK", etc.
 
 ## Text Input
 
-1. **Tap the text field** first — look for the keyboard to appear at the bottom
-2. If no keyboard appears, the field isn't focused — tap it again
-3. Call `type_text(text)` to enter text
-4. To submit: tap the blue button on the keyboard (it says "Search", "Go", "Send", or "Done" depending on context). It's usually in the bottom-right area of the keyboard
-5. To clear a field: triple-tap to select all, then `type_text` with the new value
+TapKit cannot press individual keyboard keys reliably. Instead, typing is done via the **clipboard**: load text with `copy_text_to_phone`, then paste it into a text field using iOS's paste UI.
+
+### Typing into an Empty/Inactive Text Field
+
+1. **Load text onto the clipboard:** `copy_text_to_phone(text: "Your message here")`
+2. **Long press on the text field** for ~1500ms. This activates the field, brings up the keyboard, and shows the **Paste** tooltip: `long_press(x, y, duration: 1500)`
+3. **Tap "Paste"** in the tooltip that appears above the text field
+4. **Screenshot to verify** the text was pasted correctly
+5. To submit: tap the blue button on the keyboard (it says "Search", "Go", "Send", or "Done" depending on context). It's usually in the bottom-right area of the keyboard
+
+### Replacing Existing Text
+
+To replace text already in a field, use the **Select All + Paste** workflow:
+
+1. **Load new text onto the clipboard:** `copy_text_to_phone(text: "New text")`
+2. **Double-tap on any word** in the text field to select it: `double_tap(x, y)`
+3. **Tap on an unhighlighted part** of the text field (a different spot from the selected word) — this shows the menu with **Select All**: `tap(x, y)`
+4. **Tap "Select All"** to highlight everything
+5. **Tap "Paste"** to replace all selected text with clipboard contents
+
+### Clearing a Text Field
+
+Use **Select All + Cut**:
+1. Double-tap a word to select it
+2. Tap on unhighlighted text to get the "Select All" option
+3. Tap "Select All"
+4. Tap "Cut"
+
+### Text Selection Reference
+
+| Action | Result | Menu shown |
+|--------|--------|------------|
+| `double_tap` on a word | Selects that word | Format, Cut, Copy, Paste, > |
+| `tap` on unhighlighted text (while a selection exists) | Deselects, places cursor, shows basic menu | Paste, Select, Select All, AutoFill |
+| `long_press` (~1500ms) on inactive text field | Activates field + keyboard, shows paste tooltip | Paste, AutoFill |
+
+### Text Input Pitfalls
+
+- **Don't try to tap individual keyboard keys.** The timing and precision required makes this unreliable. Always use the clipboard approach.
+- **Don't simulate triple-tap with three separate `tap` calls.** The calls are too far apart in time. Use the double-tap + tap-on-unhighlighted-text pattern instead.
+- **Long-pressing backspace is unreliable.** It deletes characters at an unpredictable rate. Prefer Select All + Cut/Paste.
+- **Always screenshot after typing actions** to verify the result before proceeding.
 
 ## Common Patterns
 
@@ -97,7 +147,7 @@ open_app("Settings") → screenshot to verify it opened
 
 **Searching within an app:**
 ```
-tap the search field → type_text("query") → tap the Search button on keyboard → screenshot
+copy_text_to_phone("query") → long_press on search field (1500ms) → tap "Paste" → tap Search button on keyboard → screenshot
 ```
 
 **Scrolling through a list:**
