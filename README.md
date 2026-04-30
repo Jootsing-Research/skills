@@ -35,10 +35,12 @@ npx skills add jootsing-research/skills
 | Skill | App | What it covers |
 |-------|-----|---------------|
 | `clock` | Clock | Alarms, stopwatch, timers, world clock |
+| `craigslist` | Craigslist | Classifieds search, filters, saved searches, replies, posting drafts |
 | `facebook` | Facebook | Feed, reels, marketplace, groups, messaging, stories |
 | `hinge` | Hinge | Profile browsing, likes, roses, messaging, preferences |
 | `instagram` | Instagram | Feed, reels, stories, DMs, explore, profile |
 | `linkedin` | LinkedIn | Feed, networking, jobs, reactions, messaging |
+| `mail` | Apple Mail | Email search, Craigslist verification, compose, drafts |
 | `telegram` | Telegram | Chat types, reactions, search, bots, groups, channels |
 | `tiktok` | TikTok | Feed navigation, video actions, DMs, inbox, creator pages |
 | `twitter` | Twitter / X | Feed, compose, DMs, search, interactions |
