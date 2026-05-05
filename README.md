@@ -46,6 +46,7 @@ npx skills add jootsing-research/skills
 | `twitter` | Twitter / X | Feed, compose, DMs, search, interactions |
 | `uber-eats` | Uber Eats | Restaurant search, ordering, checkout, reorders |
 | `weather` | Weather | Forecasts, maps, air quality, detailed conditions |
+| `whatsapp` | WhatsApp | Chats, unsaved numbers, search, calls, statuses, channels |
 
 ## How Skills Work
 
